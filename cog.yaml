@@ -9,6 +9,5 @@ build:
     - "transformers==4.30.2"
     - "accelerate==0.20.3"
     - "controlnet_aux==0.0.3"
-    - "huggingface-hub==0.13.2"
 
 predict: "predict.py:Predictor"
