@@ -26,7 +26,7 @@ class Predictor(BasePredictor):
             variant="fp16",
         )
 
-        self.pipe = pipe.to("cudad")
+        self.pipe = pipe.to("cuda")
 
     def predict(
         self,
