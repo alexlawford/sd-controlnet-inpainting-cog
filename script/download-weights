@@ -4,27 +4,64 @@
 import os
 import sys
 import torch
-from diffusers import AutoencoderKL, StableDiffusionImg2ImgPipeline
+from controlnet_aux import OpenposeDetector
+from diffusers import DiffusionPipeline, ControlNetModel
+
+# from diffusers import ... AutoencoderKL
 
 # append project directory to path so predict.py can be imported
 sys.path.append('.')
-from predict import MODEL_NAME, MODEL_CACHE, VAE_CACHE
+from predict import CONTROL_NAME, OPENPOSE_NAME, MODEL_NAME, CONTROL_CACHE, POSE_CACHE, MODEL_CACHE, 
+
+# SDXL_REFINER
+# REFINER_CACHE
 
 # Make cache folders
+if not os.path.exists(CONTROL_CACHE):
+    os.makedirs(CONTROL_CACHE)
+
+if not os.path.exists(POSE_CACHE):
+    os.makedirs(POSE_CACHE)
+
 if not os.path.exists(MODEL_CACHE):
     os.makedirs(MODEL_CACHE)
 
-if not os.path.exists(VAE_CACHE):
-    os.makedirs(VAE_CACHE)
+# if not os.path.exists(REFINER_CACHE):
+#   os.makedirs(REFINER_CACHE)
 
-url = "https://huggingface.co/stabilityai/sd-vae-ft-mse-original/blob/main/vae-ft-mse-840000-ema-pruned.safetensors"
-vae = AutoencoderKL.from_single_file(
-    url,
-    cache_dir=VAE_CACHE
+openpose = OpenposeDetector.from_pretrained(
+    CONTROL_NAME,
+    cache_dir=CONTROL_CACHE,
 )
 
-pipe = StableDiffusionImg2ImgPipeline.from_pretrained(
+controlnet = ControlNetModel.from_pretrained(
+    OPENPOSE_NAME,
+    torch_dtype=torch.float16
+)
+
+controlnet.save_pretrained(POSE_CACHE)
+
+# Download SDXL-VAE-FP16-Fix
+# better_vae = AutoencoderKL.from_pretrained(
+#    "madebyollin/sdxl-vae-fp16-fix",
+#    torch_dtype=torch.float16,
+# )
+
+# SD-XL-Base-1.0
+pipe = DiffusionPipeline.from_pretrained(
     MODEL_NAME,
+#   vae=better_vae,
     torch_dtype=torch.float16,
+    use_safetensors=True,
+    variant="fp16",
 )
 pipe.save_pretrained(MODEL_CACHE, safe_serialization=True)
+
+# SD-XL-Base-1.0 refiner
+# pipe = DiffusionPipeline.from_pretrained(
+#    SDXL_REFINER,
+#    torch_dtype=torch.float16,
+#    use_safetensors=True,
+#    variant="fp16",
+# )
+# pipe.save_pretrained(REFINER_CACHE, safe_serialization=True)
