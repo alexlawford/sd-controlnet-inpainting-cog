@@ -10,6 +10,8 @@ MODEL_NAME = "diffusers/stable-diffusion-xl-1.0-inpainting-0.1"
 CONTROL_CACHE = "control-cache"
 POSE_CACHE = "pose-cache"
 MODEL_CACHE = "model-cache"
+REFINER_CACHE = "refiner-cache"
+SDXL_REFINER = "stabilityai/stable-diffusion-xl-refiner-1.0"
 
 class Predictor(BasePredictor):
     def setup(self):
