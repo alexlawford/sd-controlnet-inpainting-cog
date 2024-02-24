@@ -2,10 +2,7 @@ from cog import BasePredictor, Input, Path
 import os
 import torch
 from PIL import Image
-from diffusers import {
-    StableDiffusionXLControlNetInpaintPipeline,
-    ControlNetModel,
-}
+from diffusers import StableDiffusionXLControlNetInpaintPipeline, ControlNetModel
 
 CONTROL_NAME = "lllyasviel/ControlNet"
 OPENPOSE_NAME = "thibaud/controlnet-openpose-sdxl-1.0"
